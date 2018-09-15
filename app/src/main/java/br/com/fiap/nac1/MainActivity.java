@@ -1,11 +1,13 @@
 package br.com.fiap.nac1;
 
 import android.app.DatePickerDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -13,6 +15,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = Room.databaseBuilder(getApplicationContext(), MyDataBase.class, "MyDataBase").build();
 
 
         /**
@@ -65,7 +70,19 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cadastrar();
+                String n = nome.getText().toString();
+                String e = endereco.getText().toString();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+                Date d = null;
+                try {
+                  d = dateFormat.parse(dataNascimento.getText().toString());
+                    Log.d("DateParsed",d.toString());
+                } catch (ParseException e1) {
+                    Log.d("Date","date");
+                    e1.printStackTrace();
+                }
+
+                cadastrar(new Aluno(n,e,d));
             }
         });
 
@@ -93,9 +110,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         dataNascimento.setText(dataSelecionada);
     }
 
-    public void cadastrar() {
-        /**
-         * Construa a lógica para salvar
-         */
+    public void cadastrar(final Aluno aluno) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                db.alunoDao().insert(aluno);
+            }
+        }).start();
     }
 }
