@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = Room.databaseBuilder(getApplicationContext(), MyDataBase.class, "MyDataBase").build();
+        db = MyDataBase.getMyInstance(getApplicationContext());
 
 
         /**
@@ -75,10 +75,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
                 Date d = null;
                 try {
-                  d = dateFormat.parse(dataNascimento.getText().toString());
-                    Log.d("DateParsed",d.toString());
+                    d = dateFormat.parse(dataNascimento.getText().toString());
                 } catch (ParseException e1) {
-                    Log.d("Date","date");
                     e1.printStackTrace();
                 }
 
@@ -115,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void run() {
                 db.alunoDao().insert(aluno);
+                Log.d("Nome",db.alunoDao().getAll().get(0).getEndereco());
             }
         }).start();
     }

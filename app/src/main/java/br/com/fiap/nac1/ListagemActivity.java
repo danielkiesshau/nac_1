@@ -1,9 +1,12 @@
 package br.com.fiap.nac1;
 
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +31,7 @@ public class ListagemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listagem);
-
+        db = MyDataBase.getMyInstance(getApplicationContext());
         recycler = findViewById(R.id.recycler);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
@@ -39,10 +42,14 @@ public class ListagemActivity extends AppCompatActivity {
     }
 
     private void consultaUsuarios() {
-        /**
-         * Cria a função e a lógica para construlação da consulta no banco de dados e a lógica para popular os dados na tela
-         * Caso necessite pode criar outros métodos para lhe apoiar nesta tarefa
-         */
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("Nome",db.alunoDao().getAll().get(0).getEndereco());
+                adapter = new AlunoAdapter(db.alunoDao().getAll(), ListagemActivity.this);
+            }
+        });
+        recycler.setAdapter(adapter);
     }
 
     @Override
