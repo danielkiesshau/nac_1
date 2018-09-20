@@ -10,7 +10,7 @@ import java.util.List;
 
 @Dao
 public interface AlunoDao {
-    @Query("SELECT * FROM Aluno LIMIT 1")
+    @Query("SELECT * FROM Aluno")
     List<Aluno> getAll();
 
     @Insert

@@ -112,9 +112,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         new Thread(new Runnable() {
             @Override
             public void run() {
-                db.alunoDao().insert(aluno);
-                Log.d("Nome",db.alunoDao().getAll().get(0).getEndereco());
+                try{
+                    db.alunoDao().insert(aluno);
+                    for (Aluno a: db.alunoDao().getAll()) {
+                        Log.d("Aluno Nome", a.getNome());
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                    }
             }
         }).start();
+
     }
 }

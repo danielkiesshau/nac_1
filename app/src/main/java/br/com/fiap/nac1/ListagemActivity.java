@@ -2,6 +2,7 @@ package br.com.fiap.nac1;
 
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ public class ListagemActivity extends AppCompatActivity {
     private MyDataBase db;
     private AlunoAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +47,19 @@ public class ListagemActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d("Nome",db.alunoDao().getAll().get(0).getEndereco());
-                adapter = new AlunoAdapter(db.alunoDao().getAll(), ListagemActivity.this);
+                alunos = new ArrayList<Aluno>(db.alunoDao().getAll());
+            }
+        }).start();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter = new AlunoAdapter(alunos, getApplicationContext());
+                recycler.setAdapter(adapter);
+
             }
         });
-        recycler.setAdapter(adapter);
+
     }
 
     @Override
